@@ -14,11 +14,11 @@ class StockTyeDialogVM : BaseViewModel() {
     private fun getItemList() =
             listOf(
                 StockTypeDto(
-                    type = 1,
+                    type = 2,
                     titleRes = R.string.add_product_
                 ),
                 StockTypeDto(
-                    type = 2,
+                    type = 1,
                     titleRes = R.string.remove_product
                 )
             )

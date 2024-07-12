@@ -150,6 +150,12 @@ class DashboardDetailFragment : BaseFragment() {
                     )
                 }
 
+                DashboardDetailPermissionType.PACKAGECREATE -> {
+                    findNavController().navigate(
+                        DashboardDetailFragmentDirections.actionDashboardDetailFragmentToNavAddPackage()
+                    )
+                }
+
                 DashboardDetailPermissionType.FIRSTWAREHOUSECOUNTING -> {
                     findNavController().navigate(
                         DashboardDetailFragmentDirections.actionDashboardDetailFragmentToNavWarehouseCountingList()

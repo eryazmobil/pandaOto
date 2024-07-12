@@ -60,6 +60,7 @@ import eryaz.software.panda.ui.dashboard.outbound.orderPicking.orderPickingDetai
 import eryaz.software.panda.ui.dashboard.outbound.orderPicking.orderPickingDetail.dialog.ShelfListDialogVM
 import eryaz.software.panda.ui.dashboard.query.queryShelf.QueryShelfFragmentVM
 import eryaz.software.panda.ui.dashboard.query.queryStorage.QueryStorageFragmentVM
+import eryaz.software.panda.ui.dashboard.recording.addPackage.AddPackageVM
 import eryaz.software.panda.ui.dashboard.recording.createVerifyShelf.VarietyShelfCreateVM
 import eryaz.software.panda.ui.dashboard.recording.dialog.ProductListDialogVM
 import eryaz.software.panda.ui.dashboard.recording.recordBarcode.RecordBarcodeVM
@@ -151,6 +152,8 @@ val appModule = module {
 
     //RecordBarcode
     viewModel { RecordBarcodeVM(barcodeRepo = get()) }
+
+    viewModel { AddPackageVM(barcodeRepo = get()) }
 
     //CompanyList
     viewModel { (companyListDto: List<CompanyDto>) ->

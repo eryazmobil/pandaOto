@@ -160,6 +160,12 @@ class DashboardDetailViewModel(
                         titleRes = R.string.menu_sub_recording_barcode,
                         type = DashboardDetailPermissionType.BARCODEREGISTERATION,
                         hasPermission = ObservableField(true)
+                    ),
+                    DashboardDetailItemDto(
+                        iconRes = 0,
+                        titleRes = R.string.menu_sub_PackageAdd,
+                        type = DashboardDetailPermissionType.PACKAGECREATE,
+                        hasPermission = ObservableField(true)
                     )
                 )
             }

@@ -11,6 +11,9 @@ import eryaz.software.panda.data.models.dto.StorageDto
 import eryaz.software.panda.data.persistence.SessionManager
 import eryaz.software.panda.data.repositories.WorkActivityRepo
 import eryaz.software.panda.ui.base.BaseViewModel
+import eryaz.software.panda.util.extensions.toDoubleOrZero
+import eryaz.software.panda.util.extensions.toIntOrZero
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -25,7 +28,7 @@ class TransferStockCorrectionVM(
     private var shelfEId: Int = 0
 
     val exitShelfId = MutableStateFlow(0)
-    val transferSuccess = MutableStateFlow(false)
+    val transferSuccess = MutableSharedFlow<Boolean>()
     val isCheckBoxChecked = MutableStateFlow(false)
     val searchProduct = MutableStateFlow("")
     val enterShelfValue = MutableStateFlow("")
@@ -73,7 +76,7 @@ class TransferStockCorrectionVM(
                 warehouseId = SessionManager.warehouseId,
                 storageId = 0
             ).onSuccess {
-               shelfEId = it.shelfId
+                shelfEId = it.shelfId
             }
         }
     }
@@ -98,11 +101,21 @@ class TransferStockCorrectionVM(
                 )
                 return false
             }
-            enteredQuantity.value.toInt() == 0 -> {
+            enteredQuantity.value.toIntOrZero() == 0 -> {
                 showError(
                     ErrorDialogDto(
                         titleRes = R.string.error,
                         messageRes = R.string.enter_valid_qty
+                    )
+                )
+                return false
+            }
+
+            typeId == 0 -> {
+                showError(
+                    ErrorDialogDto(
+                        titleRes = R.string.error,
+                        messageRes = R.string.select_process
                     )
                 )
                 return false
@@ -122,7 +135,7 @@ class TransferStockCorrectionVM(
                     shelfId = shelfEId,
                     productId = productID,
                     quantity = enteredQuantity.value.toDouble(),
-                    price = enteredPrices.value.toDouble(),
+                    price = enteredPrices.value.toDoubleOrZero(),
                     notes = enteredNotes.value
                 ).onSuccess {
                     transferSuccess.emit(true)

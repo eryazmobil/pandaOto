@@ -127,6 +127,9 @@
         <action
             android:id="@+id/action_dashboardDetailFragment_to_nav_supply"
             app:destination="@id/nav_supply" />
+        <action
+            android:id="@+id/action_dashboardDetailFragment_to_nav_add_package"
+            app:destination="@id/nav_add_package" />
     </fragment>
 
     <fragment
@@ -158,5 +161,6 @@
         android:name="eryaz.software.panda.ui.dashboard.counting.partialcounting.PartialCountingFragment"
         android:label="PartialCountingFragment" />
     <include app:graph="@navigation/nav_supply" />
+    <include app:graph="@navigation/nav_add_package" />
 
 </navigation>

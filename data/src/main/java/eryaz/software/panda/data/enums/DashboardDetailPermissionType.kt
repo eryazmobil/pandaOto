@@ -27,6 +27,7 @@ enum class DashboardDetailPermissionType(val permission: String) {
     //Kayıt detaylarnın izinler
     VARIETY("Pages.PDA.Recording.Variety"),
     BARCODEREGISTERATION("Pages.PDA.Recording.Barcode"),
+    PACKAGECREATE("Pages.PDA.Recording.Barcode"),
 
     //SAYIM
     FIRSTWAREHOUSECOUNTING("Pages.PDA.StockTaking.CountingModule"),
