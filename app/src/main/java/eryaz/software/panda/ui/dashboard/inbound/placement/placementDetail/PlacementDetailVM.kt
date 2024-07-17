@@ -304,7 +304,7 @@ class PlacementDetailVM(
                     actionId = it.workActionId
                 ).onSuccess {
                     _actionIsFinished.emit(true)
-                }.onError { message, statusEnum ->
+                }.onError { message, _ ->
                     showError(
                         ErrorDialogDto(
                             title = stringProvider.invoke(R.string.error), message = message

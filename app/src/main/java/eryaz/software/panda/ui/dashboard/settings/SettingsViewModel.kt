@@ -2,22 +2,31 @@ package eryaz.software.panda.ui.dashboard.settings
 
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import eryaz.software.panda.BuildConfig
+import eryaz.software.panda.R
 import eryaz.software.panda.data.api.utils.asUiState
 import eryaz.software.panda.data.api.utils.onSuccess
 import eryaz.software.panda.data.enums.LanguageType
 import eryaz.software.panda.data.enums.UiState
 import eryaz.software.panda.data.models.dto.CompanyDto
 import eryaz.software.panda.data.models.dto.CurrentUserDto
+import eryaz.software.panda.data.models.dto.PdaVersionDto
 import eryaz.software.panda.data.models.dto.WarehouseDto
 import eryaz.software.panda.data.persistence.SessionManager
+import eryaz.software.panda.data.repositories.AuthRepo
 import eryaz.software.panda.data.repositories.UserRepo
 import eryaz.software.panda.ui.base.BaseViewModel
+import eryaz.software.panda.util.extensions.toIntOrZero
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.lang.StringBuilder
 
-class SettingsViewModel(private val repo: UserRepo) : BaseViewModel() {
+class SettingsViewModel(
+    private val repo: UserRepo,
+    private val authRepo: AuthRepo
+) : BaseViewModel() {
 
     private val _currentUserDto = MutableStateFlow<CurrentUserDto?>(null)
     val currentUserDto = _currentUserDto.asStateFlow()
@@ -43,10 +52,20 @@ class SettingsViewModel(private val repo: UserRepo) : BaseViewModel() {
     private val _currentLanguage = MutableStateFlow("")
     val currentLanguage = _currentLanguage.asStateFlow()
 
+    private val _currentVersion = MutableStateFlow(BuildConfig.VERSION_NAME)
+    val currentVersion = _currentVersion.asStateFlow()
+
+    private val _pdaVersionModel = MutableStateFlow<PdaVersionDto?>(null)
+    val pdaVersionModel = _pdaVersionModel.asStateFlow()
+
+    val isUpToDate = MutableStateFlow("")
+    val updateClickable = MutableStateFlow(false)
+
     init {
         fetchData()
         fetchWarehouseList()
         fetchCompanyList()
+        getPdaVersion()
     }
 
     fun fetchData() {
@@ -84,6 +103,40 @@ class SettingsViewModel(private val repo: UserRepo) : BaseViewModel() {
         viewModelScope.launch {
             _warehouseName.emit(dto.name)
         }
+    }
+
+    private fun getPdaVersion() {
+        executeInBackground(
+            showProgressDialog = true
+        ) {
+            authRepo.getPdaVersion()
+                .onSuccess {
+                    _pdaVersionModel.emit(it)
+                    checkIsUpToDate(it.version)
+                }
+        }
+    }
+
+    private suspend fun checkIsUpToDate(version: String?) {
+        version?.let { pdaVersion ->
+            val newVersion = versionToInt(pdaVersion)
+            val currentVersion = versionToInt(BuildConfig.VERSION_NAME)
+            if (newVersion > currentVersion) {
+                isUpToDate.emit(version + " " + stringProvider.invoke(R.string.app_get_update))
+                updateClickable.emit(true)
+            } else {
+                isUpToDate.emit(stringProvider.invoke(R.string.app_is_up_to_date))
+            }
+        }
+    }
+
+    private fun versionToInt(version: String): Int {
+        val list = version.split(".")
+        val sb = StringBuilder()
+        list.forEach {
+            sb.append(it)
+        }
+        return sb.toString().toIntOrZero()
     }
 
     private fun fetchWarehouseList() = executeInBackground(_uiState) {

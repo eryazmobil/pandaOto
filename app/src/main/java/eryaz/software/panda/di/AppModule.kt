@@ -87,7 +87,7 @@ val appModule = module {
     }
 
     //SettingViewModel
-    viewModel { SettingsViewModel(repo = get()) }
+    viewModel { SettingsViewModel(repo = get(), authRepo = get()) }
 
     //ChangePasswordVM
     viewModel { ChangePasswordVM(repo = get()) }

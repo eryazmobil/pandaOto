@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import eryaz.software.panda.data.models.dto.ProductShelfQuantityDto
 
-class ShelfProductQuantityAdapter :
+class ShelfProductQuantityAdapter(var showProduct:Boolean = false) :
     ListAdapter<ProductShelfQuantityDto, RecyclerView.ViewHolder>(DiffCallBacksShelf) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -18,7 +18,8 @@ class ShelfProductQuantityAdapter :
             is ShelfProductQuantityVH -> {
                 holder.bind(
                     dto = getItem(position),
-                    isLastItem = position == itemCount.minus(1)
+                    isLastItem = position == itemCount.minus(1),
+                    showProductInfo = showProduct
                 )
             }
         }

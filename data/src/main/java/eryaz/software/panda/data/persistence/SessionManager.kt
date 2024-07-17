@@ -16,6 +16,8 @@ object SessionManager {
     private const val KEY_COMPANY_NAME = "companyName"
     private const val KEY_WAREHOUSE_NAME = "warehouseName"
     private const val KEY_WAREHOUSE_ID = "warehouseId"
+    private const val KEY_ALL_PERMISSION_ACCEPTED = "allPermissionAccepted"
+
 
     private lateinit var sharedPref: SharedPreferences
 
@@ -64,6 +66,12 @@ object SessionManager {
         get() = sharedPref.getInt(KEY_USER_ID, 0)
         set(value) {
             sharedPref.edit { putInt(KEY_USER_ID, value) }
+        }
+
+    var allPermissionAccepted
+        get() = sharedPref.getBoolean(KEY_ALL_PERMISSION_ACCEPTED, false)
+        set(value) {
+            sharedPref.edit { putBoolean(KEY_ALL_PERMISSION_ACCEPTED, value) }
         }
 
     var language

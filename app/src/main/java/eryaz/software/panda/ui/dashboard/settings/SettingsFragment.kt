@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
+import eryaz.software.panda.core.ApkDownloadService
 import eryaz.software.panda.data.models.dto.CompanyDto
 import eryaz.software.panda.data.models.dto.WarehouseDto
 import eryaz.software.panda.databinding.FragmentSettingsBinding
@@ -78,6 +79,18 @@ class SettingsFragment : BaseFragment() {
                 SettingsFragmentDirections.actionSettingFragmentToPasswordDialog()
             )
         }
+        binding.appVersionUpdate.setOnSingleClickListener {
+
+            viewModel.pdaVersionModel.value?.let {
+                ApkDownloadService.startService(
+                    requireContext(),
+                    it.downloadLink,
+                    it.apkZipName,
+                    it.apkFileName
+                )
+            }
+        }
+
     }
 
     override fun subscribeToObservables() {

@@ -12,11 +12,15 @@ class ShelfProductQuantityVH(val binding: ItemStorageQuantityTextBinding) :
 
     fun bind(
         dto: ProductShelfQuantityDto,
-        isLastItem: Boolean
+        isLastItem: Boolean,
+        showProductInfo : Boolean
     ) {
-        binding.keyTxt.text = dto.shelf?.shelfAddress
+        if (showProductInfo) {
+            binding.keyTxt.text = dto.product.code
+        } else {
+            binding.keyTxt.text = dto.shelf?.shelfAddress
+        }
         binding.valueTxt.text = dto.quantity
-
         binding.underline.isVisible = !isLastItem
     }
 
