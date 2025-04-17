@@ -3,7 +3,6 @@ package eryaz.software.panda.data.models.remote.response
 import com.google.gson.annotations.SerializedName
 
 data class PickingSuggestionResponse(
-
     @SerializedName("sourceId")
     val id: Int,
     @SerializedName("product")
@@ -17,5 +16,7 @@ data class PickingSuggestionResponse(
     @SerializedName("controlPoint")
     val controlPoint: ControlPointResponse?,
     @SerializedName("collectPoint")
-    val collectPoint: String?
+    val collectPoint: String?,
+    @SerializedName("startDate")
+    val startDate: String?
 )

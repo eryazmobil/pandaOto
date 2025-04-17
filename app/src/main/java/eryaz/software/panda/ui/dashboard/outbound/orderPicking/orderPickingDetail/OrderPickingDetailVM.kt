@@ -39,13 +39,15 @@ class OrderPickingDetailVM(
     val shelfAddress = MutableStateFlow("")
     private val fifoCode = MutableStateFlow(" ")
     val parentView = MutableStateFlow(false)
-    var productId: Int = 0
 
     private var orderPickingDto: OrderPickingDto? = null
     private var selectedOrderDetailProduct: OrderDetailDto? = null
-
     private var selectedSuggestionIndex: Int = -1
     private var shelfId: Int = 0
+    var productId: Int = 0
+
+    private val _startDate = MutableStateFlow("")
+    val startDate = _startDate.asStateFlow()
 
     private val _selectedSuggestion = MutableStateFlow<PickingSuggestionDto?>(null)
     var selectedSuggestion = _selectedSuggestion.asStateFlow()
@@ -93,7 +95,6 @@ class OrderPickingDetailVM(
     val shelfList = _shelfList.asStateFlow()
 
     init {
-
         getOrderDetailPickingList()
     }
 
@@ -390,6 +391,8 @@ class OrderPickingDetailVM(
             )
 
             _pageNum.emit("${selectedSuggestionIndex + 1} / ${orderPickingDto?.pickingSuggestionList?.size}")
+
+            _startDate.emit(orderPickingDto?.pickingSuggestionList?.get(selectedSuggestionIndex)?.startDate.orEmpty())
         }
     }
 

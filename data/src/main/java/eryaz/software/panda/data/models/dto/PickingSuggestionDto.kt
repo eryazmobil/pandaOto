@@ -1,12 +1,12 @@
 package eryaz.software.panda.data.models.dto
 
 data class PickingSuggestionDto(
-
     val id: Int,
     val product: ProductDto,
     val shelfForPicking: StockShelfQuantityDto,
     val quantityWillBePicked: Int,
     var quantityPicked: Int,
     val controlPoint: ControlPointDto?,
-    val collectPoint: String?
+    val collectPoint: String?,
+    val startDate: String?
 )

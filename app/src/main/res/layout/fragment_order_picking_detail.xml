@@ -106,8 +106,24 @@
                             android:textColor="@color/black"
                             android:textSize="@dimen/_13sdp"
                             app:fontFamily="@font/roboto_bold"
-                            app:layout_constraintEnd_toStartOf="@id/pageNumber"
+                            app:layout_constraintEnd_toStartOf="@id/dateTxt"
                             app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/productCode"
+                            tools:text="KIA Optima" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/dateTxt"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:paddingTop="@dimen/_4sdp"
+                            android:text="@{viewModel.startDate}"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_11sdp"
+                            android:gravity="end"
+                            app:fontFamily="@font/roboto_bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/marcaCode"
                             app:layout_constraintTop_toBottomOf="@id/productCode"
                             tools:text="KIA Optima" />
 
