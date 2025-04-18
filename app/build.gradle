@@ -15,8 +15,8 @@ android {
         applicationId "eryaz.software.panda"
         minSdk 23
         targetSdk 34
-        versionCode 4
-        versionName "1.0.3"
+        versionCode 5
+        versionName "1.0.5"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -34,12 +34,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = '17'
     }
 
     buildFeatures {
@@ -47,17 +47,17 @@ android {
         viewBinding true
     }
 
-    lintOptions {
-        checkReleaseBuilds false
-    }
 
     namespace 'eryaz.software.panda'
+    lint {
+        checkReleaseBuilds false
+    }
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.7.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -70,30 +70,26 @@ dependencies {
 
     // Lifecycle components
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.7'
 
     //WorkManager
     implementation("androidx.work:work-runtime-ktx:2.8.1")
 
     //Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
 
     //Extra
     implementation "net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.1.0"
-    implementation 'com.intuit.sdp:sdp-android:1.0.6'
+    implementation 'com.intuit.sdp:sdp-android:1.1.0'
     implementation "com.github.bumptech.glide:glide:4.14.2"
     implementation 'com.github.razir.progressbutton:progressbutton:2.1.0'
     implementation "com.airbnb.android:lottie:5.2.0"
     implementation "androidx.multidex:multidex:2.0.1"
 
-    implementation platform('com.google.firebase:firebase-bom:29.0.1')
+    implementation platform('com.google.firebase:firebase-bom:32.7.3')
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-messaging")
 
-}
-
-kapt {
-    correctErrorTypes = true
 }

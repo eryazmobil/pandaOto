@@ -80,6 +80,9 @@ class OrderPickingDetailVM(
     private val _nextOrder = MutableStateFlow(false)
     val nextOrder = _nextOrder.asStateFlow()
 
+    private val _startDate = MutableStateFlow("")
+    val startDate = _startDate.asStateFlow()
+
     private val _finishWorkAction = MutableStateFlow(false)
     val finishWorkAction = _finishWorkAction.asStateFlow()
 
@@ -145,6 +148,7 @@ class OrderPickingDetailVM(
             )
 
             _pageNum.emit("${selectedSuggestionIndex + 1} / ${orderPickingDto?.pickingSuggestionList?.size}")
+            _startDate.emit(orderPickingDto?.pickingSuggestionList?.get(selectedSuggestionIndex)?.startDate.orEmpty())
         }
     }
 
