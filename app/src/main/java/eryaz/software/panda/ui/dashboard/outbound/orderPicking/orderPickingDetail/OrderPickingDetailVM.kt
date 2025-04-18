@@ -1,6 +1,5 @@
 package eryaz.software.panda.ui.dashboard.outbound.orderPicking.orderPickingDetail
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -291,10 +290,12 @@ class OrderPickingDetailVM(
                     finishWorkAction()
                 }
             }.onError { _, _ ->
-                showError(ErrorDialogDto(
-                    titleRes = R.string.error,
-                    message = "Crossdock oluşturulurken sorun oluştu."
-                ))
+                showError(
+                    ErrorDialogDto(
+                        titleRes = R.string.error,
+                        message = "Crossdock oluşturulurken sorun oluştu."
+                    )
+                )
             }
         }
     }
@@ -350,7 +351,6 @@ class OrderPickingDetailVM(
     }
 
 
-
     private fun checkPickingFromOrder() {
         val isQuantityCollectedLess = orderPickingDto?.orderDetailList?.any {
             it.quantityCollected < it.quantity
@@ -368,14 +368,14 @@ class OrderPickingDetailVM(
             selectedOrderDetailProduct = orderDetail
 
             viewModelScope.launch {
-                productBarcode.emit("")
-                _showProductDetail.emit(true)
-                _controlQtyAndCollectPoint.emit("${orderDetail.orderHeader.controlPoint?.code} / ${orderDetail.orderHeader.collectPoint}")
-
                 orderPickingDto?.pickingSuggestionList?.indexOfFirst { it.product.id == orderDetail.product.id }
                     ?.let { index ->
                         selectedSuggestionIndex = index - 1
                         _pickedAndOrderQty.emit("${orderDetail.quantityCollected} / ${orderDetail.quantity}")
+
+                        productBarcode.emit("")
+                        _showProductDetail.emit(true)
+                        _controlQtyAndCollectPoint.emit("${orderDetail.orderHeader.controlPoint?.code} / ${orderDetail.orderHeader.collectPoint}")
 
                         showNext()
                     }
