@@ -61,7 +61,8 @@ fun PickingSuggestionResponse.toDto() = PickingSuggestionDto(
     quantityWillBePicked = quantityWillBePicked,
     quantityPicked = quantityPicked,
     controlPoint = controlPoint?.toDto(),
-    collectPoint = collectPoint.orEmpty()
+    collectPoint = collectPoint.orEmpty(),
+    startDate = startDate.getFormattedDate("dd.MM.yyyy HH:mm")
 )
 
 fun OrderPickingResponse.toDto() = OrderPickingDto(
