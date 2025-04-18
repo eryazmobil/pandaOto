@@ -124,6 +124,11 @@ class OrderPickingDetailFragment : BaseFragment() {
             true
         }
 
+        viewModel.productRequestFocus.asLiveData().observe(this) {
+            if (it)
+                binding.searchProductEdt.requestFocus()
+        }
+
         binding.shelfAddressEdt.setOnEditorActionListener { _, actionId, _ ->
 
             val shelfAddress = viewModel.shelfAddress.value.trim().isNotEmpty()

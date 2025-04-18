@@ -23,6 +23,7 @@ import eryaz.software.panda.data.repositories.OrderRepo
 import eryaz.software.panda.data.repositories.WorkActivityRepo
 import eryaz.software.panda.ui.base.BaseViewModel
 import eryaz.software.panda.util.extensions.orZero
+import eryaz.software.panda.util.extensions.toIntOrZero
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -39,12 +40,14 @@ class OrderPickingDetailVM(
     val shelfAddress = MutableStateFlow("")
     private val fifoCode = MutableStateFlow(" ")
     val parentView = MutableStateFlow(false)
+    val productRequestFocus = MutableSharedFlow<Boolean>()
+
     var productId: Int = 0
 
     private var orderPickingDto: OrderPickingDto? = null
     private var selectedOrderDetailProduct: OrderDetailDto? = null
 
-    private var selectedSuggestionIndex: Int = -1
+    private var selectedSuggestionIndex: Int = 0
     private var shelfId: Int = 0
 
     private val _selectedSuggestion = MutableStateFlow<PickingSuggestionDto?>(null)
@@ -103,12 +106,16 @@ class OrderPickingDetailVM(
             userId = SessionManager.userId
         ).onSuccess {
             if (it.orderDetailList.isNotEmpty()) {
+
                 if (it.pickingSuggestionList.isNotEmpty()) {
                     orderPickingDto = it
-                    showNext()
+                    _selectedSuggestion.emit(it.pickingSuggestionList.first())
+                    setSelectedSuggestion()
+
                 } else {
                     parentView.emit(true)
                 }
+
             } else {
                 showError(
                     ErrorDialogDto(
@@ -122,6 +129,22 @@ class OrderPickingDetailVM(
                     titleRes = R.string.error, message = message
                 )
             )
+        }
+    }
+
+    private fun setSelectedSuggestion() {
+
+        viewModelScope.launch {
+            val orderDetail = orderPickingDto?.orderDetailList?.find {
+                selectedSuggestion.value?.id == it.id
+            }
+
+            _orderQuantityTxt.emit(
+                "${orderDetail?.quantityCollected} / " +
+                        "${orderDetail?.quantity}"
+            )
+
+            _pageNum.emit("${selectedSuggestionIndex + 1} / ${orderPickingDto?.pickingSuggestionList?.size}")
         }
     }
 
@@ -208,18 +231,22 @@ class OrderPickingDetailVM(
                 fifoCode = fifoCode.value
             ).onSuccess {
                 updateOrderQuantity()
-                checkFinishedOrderFromCardPosition()
                 checkPickingFromOrder()
+                getOrderDetailPickingList()
 
                 enteredQuantity.value = ""
                 shelfAddress.value = ""
                 _showProductDetail.emit(false)
+                productRequestFocus.emit(true)
             }
         }
     }
 
-    fun checkCrossDockNeedByActionId() {
-        executeInBackground {
+    fun checkCrossDockNeedByActionId(
+    ) {
+        executeInBackground(
+            showErrorDialog = false
+        ) {
             orderRepo.checkCrossDockNeedByActionId(
                 workActionId = TemporaryCashManager.getInstance().workAction?.workActionId.orZero()
             ).onSuccess {
@@ -259,6 +286,11 @@ class OrderPickingDetailVM(
                 } else {
                     finishWorkAction()
                 }
+            }.onError { _, _ ->
+                showError(ErrorDialogDto(
+                    titleRes = R.string.error,
+                    message = "Crossdock oluşturulurken sorun oluştu."
+                ))
             }
         }
     }
@@ -313,13 +345,7 @@ class OrderPickingDetailVM(
         showNext()
     }
 
-    private fun checkFinishedOrderFromCardPosition() {
-        if (_selectedSuggestion.value?.quantityWillBePicked.orZero() - _selectedSuggestion.value?.quantityPicked.orZero() == 0) {
-            viewModelScope.launch {
-                showNext()
-            }
-        }
-    }
+
 
     private fun checkPickingFromOrder() {
         val isQuantityCollectedLess = orderPickingDto?.orderDetailList?.any {
@@ -332,9 +358,8 @@ class OrderPickingDetailVM(
     }
 
     private fun checkProductOrder() {
-        Log.d("TAG", "checkProductOrder: ${orderPickingDto?.orderDetailList}")
         orderPickingDto?.orderDetailList?.find {
-            it.quantityCollected < it.quantity && it.product.id == productId
+            it.quantityCollected.toIntOrZero() < it.quantity.toIntOrZero() && it.product.id == productId
         }?.let { orderDetail ->
             selectedOrderDetailProduct = orderDetail
 
@@ -381,15 +406,18 @@ class OrderPickingDetailVM(
 
             orderPickingDto?.pickingSuggestionList?.getOrNull(selectedSuggestionIndex)?.let {
                 _selectedSuggestion.emit(it)
+
                 productId = it.product.id
-            } ?: run { selectedSuggestionIndex-- }
+            } ?: run {
+                selectedSuggestionIndex--
+                orderPickingDto?.pickingSuggestionList?.getOrNull(selectedSuggestionIndex)?.let {
+                    _selectedSuggestion.emit(it)
 
-            _orderQuantityTxt.emit(
-                "${orderPickingDto?.pickingSuggestionList?.getOrNull(selectedSuggestionIndex)?.quantityPicked} / " +
-                        "${orderPickingDto?.pickingSuggestionList?.getOrNull(selectedSuggestionIndex)?.quantityWillBePicked}"
-            )
+                    productId = it.product.id
+                }
+            }
+            setSelectedSuggestion()
 
-            _pageNum.emit("${selectedSuggestionIndex + 1} / ${orderPickingDto?.pickingSuggestionList?.size}")
         }
     }
 
@@ -402,13 +430,7 @@ class OrderPickingDetailVM(
                 productId = it.product.id
             } ?: run { selectedSuggestionIndex++ }
 
-            _pageNum.emit("${selectedSuggestionIndex + 1} / ${orderPickingDto?.pickingSuggestionList?.size}")
-
-            _orderQuantityTxt.emit(
-                "${orderPickingDto?.pickingSuggestionList?.getOrNull(selectedSuggestionIndex)?.quantityPicked} / " +
-                        "${orderPickingDto?.pickingSuggestionList?.getOrNull(selectedSuggestionIndex)?.quantityWillBePicked}"
-            )
-
+            setSelectedSuggestion()
         }
     }
 

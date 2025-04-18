@@ -108,6 +108,13 @@ class OrderPickingListVM(private val repo: WorkActivityRepo) : BaseViewModel() {
             ).onSuccess {
                 TemporaryCashManager.getInstance().workAction = it
                 _navigateToDetail.emit(true)
+            }.onError { message, statusEnum ->
+                showWarning(
+                    WarningDialogDto(
+                        title = stringProvider.invoke(R.string.not_found_work_activity),
+                        message = stringProvider.invoke(R.string.list_is_empty)
+                    )
+                )
             }
         }
     }
